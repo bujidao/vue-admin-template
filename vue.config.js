@@ -1,12 +1,16 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
+var ZipPlugin = require('zip-webpack-plugin')
+const packageinfo = require('./package.json')
+const webpack = require('webpack')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
 const name = defaultSettings.title || 'vue Admin Template' // page title
+const version = packageinfo.version
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
@@ -54,7 +58,15 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
-    }
+    },
+    plugins: [
+      new ZipPlugin({
+        path: '../distZip',
+
+        filename: `${name}_v${version}.zip`
+      }),
+      new webpack.BannerPlugin(`pacakge version：${packageinfo.version}`)
+    ]
   },
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test
